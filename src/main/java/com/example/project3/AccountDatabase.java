@@ -41,10 +41,20 @@ public class AccountDatabase {
         return NOT_FOUND;
     }
 
+    /**
+     * Finds the account in the database
+     * @param account The account to be found
+     * @return The index of the account if found, otherwise -1
+     */
     public int findAccount(Account account) {
         return find(account);
     }
 
+    /**
+     * Checks if account is closed already in the database
+     * @param account The account to check
+     * @return True if closed, false if not
+     */
     public boolean isAccountClosed(Account account) {
         int index = findAccount(account);
         return accounts[index].checkState();
@@ -166,13 +176,21 @@ public class AccountDatabase {
     }
 
     /**
-     * Prints the database in current order
+     * Generates a string containing a list of all the accounts in the database
+     * @return The list of all the accounts in the database
      */
-    public boolean print() {
+    public String print() {
+        StringBuilder output = new StringBuilder();
         if (!(numAcct > 0)) {
-            return false;
+            return "Account Database is empty!\n";
         }
-        return true;
+        output.append("*list of accounts in the database*\n");
+        for (Account account : accounts) {
+            if (account != null)
+            output.append(account).append("\n");
+        }
+        output.append("*end of list*\n");
+        return output.toString();
     }
 
     /**
@@ -193,34 +211,65 @@ public class AccountDatabase {
     }
 
     /**
-     * Prints the database in alphabetical order by type
+     * Generates a string containing a list of all the accounts in the database sorted by type
+     * @return The list of all the accounts in the database sorted by type
      */
-    public boolean printByAccountType() {
+    public String printByAccountType() {
+        StringBuilder output = new StringBuilder();
         if (!(numAcct > 0)) {
-            return false;
+            return "Account Database is empty!\n";
         }
         sortType(accounts);
-        return true;
+        output.append("*list of accounts by account type.*\n");
+        for (Account account : accounts) {
+            if (account != null)
+            output.append(account).append("\n");
+        }
+        output.append("*end of list*\n");
+        return output.toString();
     }
 
     /**
-     * Prints the database in current order and with monthly fee and interest information
+     * Generates a string containing a list of all the accounts in the database with fees and interests
+     * @return The list of all the accounts in the database with fees and interests
      */
-    public boolean printFeeAndInterest() {
+    public String printFeeAndInterest() {
+        StringBuilder output = new StringBuilder();
         if (!(numAcct > 0)) {
-            return false;
+            return "Account Database is empty!\n";
         }
-        return true;
+        sortType(accounts);
+        output.append("*list of accounts with fee and monthly interest.*\n");
+        for (Account account : accounts) {
+            if (account != null)
+            output.append(account + "::fee $" + df.format(account.fee())
+                    + "::monthly interest $"
+                    + df.format(account.balance * account.monthlyInterest()) + "\n");
+        }
+        output.append("*end of list*\n");
+        return output.toString();
     }
 
     /**
-     * Updates the account balances with fee and interest rates
+     * Updates the account balances with fee and interest rates and returns the list of accounts with updated balances
+     * @return The list of accounts with updated balances
      */
-    public boolean update() {
+    public String update() {
+        StringBuilder output = new StringBuilder();
         if (!(numAcct > 0)) {
-            return false;
+            return "Account Database is empty!\n";
         }
-        return true;
+        sortType(accounts);
+        output.append("*list of accounts with updated balance.*\n");
+        for (Account account : accounts) {
+            if (account != null) {
+                account.deposit(account.balance * account.monthlyInterest());
+                account.withdraw(account.fee());
+                output.append(account).append("\n");
+            }
+        }
+        output.append("*end of list*\n");
+        return output.toString();
     }
 
 }

@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project3.BankTellerController">
    <bottom>
       <TextArea fx:id="output" editable="false" prefHeight="384.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
    </bottom>
@@ -88,7 +88,7 @@
                               </GridPane>
                               <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="266.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                  <children>
-                                    <RadioButton fx:id="nb" mnemonicParsing="false" text="New Brunswick">
+                                    <RadioButton fx:id="nb" disable="true" mnemonicParsing="false" text="New Brunswick">
                                        <padding>
                                           <Insets bottom="5.0" />
                                        </padding>
@@ -96,17 +96,17 @@
                                           <ToggleGroup fx:id="campus" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="newark" mnemonicParsing="false" text="Newark" toggleGroup="$campus">
+                                    <RadioButton fx:id="newark" disable="true" mnemonicParsing="false" text="Newark" toggleGroup="$campus">
                                        <padding>
                                           <Insets bottom="5.0" />
                                        </padding>
                                     </RadioButton>
-                                    <RadioButton fx:id="camden" mnemonicParsing="false" text="Camden" toggleGroup="$campus">
+                                    <RadioButton fx:id="camden" disable="true" mnemonicParsing="false" text="Camden" toggleGroup="$campus">
                                        <padding>
                                           <Insets bottom="20.0" />
                                        </padding>
                                     </RadioButton>
-                                    <CheckBox fx:id="loyalty" mnemonicParsing="false" text="Loyal Customer" />
+                                    <CheckBox fx:id="loyalty" disable="true" mnemonicParsing="false" text="Loyal Customer" />
                                  </children>
                               </VBox>
                               <DatePicker fx:id="dateOfBirth" GridPane.columnIndex="1" GridPane.rowIndex="2" />

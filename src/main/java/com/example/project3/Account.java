@@ -75,7 +75,8 @@ public abstract class Account {
     }
 
     /**
-     * Returns the state of the account
+     * Checks to see if the account is closed or not
+     * @return True if closed, false if not
      */
     public boolean checkState() {
         return closed;

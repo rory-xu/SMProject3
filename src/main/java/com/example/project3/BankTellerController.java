@@ -1,7 +1,5 @@
 package com.example.project3;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -13,13 +11,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 
-import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 
-public class Controller {
+/**
+ * This class controls the application and determines what is executed when actions are made
+ * @author Rory Xu, Hassan Alfareed
+ */
+public class BankTellerController {
 
 	AccountDatabase database = new AccountDatabase();
-	private static final DecimalFormat df = new DecimalFormat("#,##0.00");
 
 	@FXML
 	private ToggleGroup accountType;
@@ -118,6 +118,10 @@ public class Controller {
 	@FXML
 	private Button withdrawButton;
 
+	/**
+	 * Opens an account with specific parameters
+	 * @param event On open button click
+	 */
 	@FXML
 	void openAccount(ActionEvent event) {
 		try{
@@ -162,9 +166,7 @@ public class Controller {
 						return;
 					}
 				}
-				case "Savings" -> {
-					acc = new Savings(accHolder, balance, loyalty.isSelected() ? 1 : 0);
-				}
+				case "Savings" -> acc = new Savings(accHolder, balance, loyalty.isSelected() ? 1 : 0);
 			}
 			assert acc != null;
 
@@ -186,12 +188,12 @@ public class Controller {
 		catch (NullPointerException e) {
 			output.appendText("Missing data for opening an account.\n");
 		}
-
-		output.textProperty().addListener((observable, oldValue, newValue) -> {
-			// this will run whenever text is changed
-		});
 	}
 
+	/**
+	 * Closes the account with specific parameters
+	 * @param event On close button click
+	 */
 	@FXML
 	void closeAccount(ActionEvent event) {
 		try {
@@ -212,16 +214,23 @@ public class Controller {
 				case "Savings" -> new Savings(accHolder, 0, 0);
 				default -> null;
 			};
-			if (!database.close(acc)) {
-				output.appendText("Account is closed already.\n");
+			if (database.findAccount(acc) == -1) {
+				output.appendText("Cannot close an account that doesn't exist.\n");
 			}
-			else output.appendText("Account closed.\n");
+			else {
+				if (!database.close(acc)) output.appendText("Account is closed already.\n");
+				else output.appendText("Account closed.\n");
+			}
 		}
 		catch (NullPointerException e) {
 			output.appendText("Missing data for closing an account.\n");
 		}
 	}
 
+	/**
+	 * Deposits a sum of money into the specified account
+	 * @param event On deposit button click
+	 */
 	@FXML
 	void depositBalance(ActionEvent event) {
 		try {
@@ -249,6 +258,7 @@ public class Controller {
 			};
 
 			if (database.findAccount(acc) == -1) {
+				assert acc != null;
 				output.appendText(acc.holder + " " + acc.getType() + " is not in the database.\n");
 				return;
 			}
@@ -261,6 +271,10 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Withdraws a sum of money from a specified account
+	 * @param event On withdraw button click
+	 */
 	@FXML
 	void withdrawBalance(ActionEvent event) {
 		try {
@@ -300,6 +314,10 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Disables campus and loyal customer options
+	 * @param event On checking radio button selection
+	 */
 	@FXML
 	void checking(ActionEvent event) {
 		campus.getToggles().forEach(toggle -> {
@@ -309,6 +327,10 @@ public class Controller {
 		loyalty.setDisable(true);
 	}
 
+	/**
+	 * Enables campus and disables loyal customer options
+	 * @param event On college checking radio button selection
+	 */
 	@FXML
 	void collegeChecking(ActionEvent event) {
 		campus.getToggles().forEach(toggle -> {
@@ -318,6 +340,10 @@ public class Controller {
 		loyalty.setDisable(true);
 	}
 
+	/**
+	 * Enables loyal customer and disables campus options
+	 * @param event On savings radio button selection
+	 */
 	@FXML
 	void savings(ActionEvent event) {
 		campus.getToggles().forEach(toggle -> {
@@ -327,6 +353,10 @@ public class Controller {
 		loyalty.setDisable(false);
 	}
 
+	/**
+	 * Disables campus and loyal customer options
+	 * @param event
+	 */
 	@FXML
 	void moneyMarket(ActionEvent event) {
 		campus.getToggles().forEach(toggle -> {
@@ -336,70 +366,47 @@ public class Controller {
 		loyalty.setDisable(true);
 	}
 
+	/**
+	 * Outputs the list of all accounts in the database
+	 * @param event On show all accounts button click
+	 */
 	@FXML
 	void showAll(ActionEvent event) {
-		Account [] accs = database.getAccounts();
-		if (!database.print()) {
-			output.appendText("Account Database is empty!\n");
-			return;
-		}
-		output.appendText("*list of accounts in the database*\n");
-		for (Account account : accs) {
-			if (account != null)
-				output.appendText(account + "\n");
-		}
-		output.appendText("*end of list*\n");
+		output.appendText(database.print());
 	}
 
+	/**
+	 * Outputs the sorted list of all accounts in the database by type
+	 * @param event On sort all accounts by type button click
+	 */
 	@FXML
 	void showByTypeButton(ActionEvent event) {
-		Account [] accs = database.getAccounts();
-		if (!database.printByAccountType()) {
-			output.appendText("Account Database is empty!\n");
-			return;
-		}
-		output.appendText("*list of accounts in the database*\n");
-		for (Account account : accs) {
-			if (account != null)
-				output.appendText(account + "\n");
-		}
-		output.appendText("*end of list*\n");
+		output.appendText(database.printByAccountType());
 	}
 
+	/**
+	 * Outputs the list of all accounts in the database with their interest and fees
+	 * @param event On show all accounts interest and fees button click
+	 */
 	@FXML
 	void showInterest(ActionEvent event) {
-		Account [] accs = database.getAccounts();
-		if (!database.printFeeAndInterest()) {
-			output.appendText("Account Database is empty!\n");
-			return;
-		}
-
-		output.appendText("*list of accounts with fee and monthly interest*\n");
-		for (Account account : accs) {
-			System.out.println(account + "::fee $" + df.format(account.fee())
-					+ "::monthly interest $"
-					+ df.format(account.balance * account.monthlyInterest()));
-		}
-		System.out.println("*end of list.\n");
+		output.appendText(database.printFeeAndInterest());
 	}
 
+	/**
+	 * Updates and outputs the list of all accounts in the database after applying interest and fees
+	 * @param event On update account balances after interest and fees button click
+	 */
 	@FXML
 	void updateAccounts(ActionEvent event) {
-		Account [] accs = database.getAccounts();
-
-		if (!database.update()) {
-			output.appendText("Account Database is empty!\n");
-			return;
-		}
-		output.appendText("*list of accounts with updated balance*\n");
-		for (Account account : accs) {
-			account.deposit(account.balance * account.monthlyInterest());
-			account.withdraw(account.fee());
-			output.appendText(account + "\n");
-		}
-		output.appendText("*end of list.\n");
+		output.appendText(database.update());
 	}
 
+	/**
+	 * Checks to see whether or not the date entered is a valid birth date
+	 * @param dob A Date object
+	 * @return True if the date is valid, false if not
+	 */
 	private boolean dateChecker(Date dob) {
 		Date current = new Date();
 
